@@ -10,6 +10,7 @@ from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.review import Review
+from os import replace
 
 
 class HBNBCommand(cmd.Cmd):
@@ -114,16 +115,29 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """ Create an object of any class"""
+        """ Create new instance of baseModel"""
+        argsplit = args.split()
         if not args:
             print("** class name missing **")
             return
-        elif args not in HBNBCommand.classes:
+        elif argsplit[0] not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        new_instance = HBNBCommand.classes[args]()
-        storage.save()
+        new_instance = HBNBCommand.classes[argsplit[0]]()
         print(new_instance.id)
+        for i in range(1, len(argsplit)):
+            pichu = args[i].split('=')
+            k = pichu[0]
+            v = pichu[1]
+            if '_' in v:
+                v = v.replace('_', ' ')
+            if '\"' in v:
+                v = v.replace('\"', '')
+            elif '.' in v:
+                v = float(v)
+                setatrr(new_instance, k, v)
+        storage.save()
+        storage.new(new_instance)
         storage.save()
 
     def help_create(self):
