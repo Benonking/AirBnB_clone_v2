@@ -18,7 +18,7 @@ class FileStorage:
                 else:
                     continue
             return dictionary
-        else: 
+        else:
             return FileStorage.__objects
 
     def new(self, obj):
