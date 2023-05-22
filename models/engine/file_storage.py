@@ -60,11 +60,4 @@ class FileStorage:
 
     def delete(self, obj=None):
         if obj:
-            key = obj.to_dict()['__class__'] + '.' + obj.id
-            try:
-                del (self.__objects[key])
-                self.save()
-            except BaseException:
-                pass
-        else:
-            pass
+            self.__objects.pop(obj.__class__.__name__ + '.' + obj.id)

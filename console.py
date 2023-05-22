@@ -116,35 +116,29 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         """ Create an object of any class"""
-        try:
-            if not line:
-                raise SyntaxError()
-            my_list = line.split(" ")
-
-            kwargs = {}
-            for i in range(1, len(my_list)):
-                key, value = tuple(my_list[i].split("="))
-                if value[0] == '"':
-                    value = value.strip('"').replace("_", " ")
-                else:
-                    try:
-                        value = eval(value)
-                    except (SyntaxError, NameError):
-                        continue
-                kwargs[key] = value
-
-            if kwargs == {}:
-                obj = eval(my_list[0])()
-            else:
-                obj = eval(my_list[0])(**kwargs)
-                storage.new(obj)
-            print(obj.id)
-            obj.save()
-
-        except SyntaxError:
+        argsplit = args.split()
+        if not args:
             print("** class name missing **")
-        except NameError:
+            return
+        elif argsplit[0] not in HBNBCommand.classes:
             print("** class doesn't exist **")
+            return
+        new_instance = HBNBCommand.classes[argsplit[0]]()
+        print(new_instance.id)
+        for i in range(1, len(argsplit)):
+            pichu = argsplit[i].split('=')
+            k = pichu[0]
+            v = pichu[1]
+            if '_' in v:
+                v = v.replace('_', ' ')
+            if '\"' in v:
+                v = v.replace('\"', '')
+            elif '.' in v:
+                v = float(v)
+            setattr(new_instance, k, v)
+        storage.save()
+        storage.new(new_instance)
+        storage.save()
 
     def help_create(self):
         """ Help information for the create method """
